@@ -1,0 +1,21 @@
+{
+  "name": "demons_of_the_cyclic_space",
+  "authors": [
+    "evanhackett <evanwhackett@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "^4.13.1"
+  }
+}
