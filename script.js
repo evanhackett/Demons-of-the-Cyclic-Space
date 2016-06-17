@@ -6,14 +6,20 @@ var width = canvas.width;
 var height = canvas.height;
 
 // grid constructor
-function Grid(width, height, ctx) {
+function Grid(resolution, canvas) {
 
   // create grid structure (2d array).
+  var grid = [];
+  grid.length = resolution;
+
+  _.fill(grid, _.fill(([]).length = resolution, 0)) // fill grid with arrays of length resolution which are filled with 0
 
   // color cell function is a public method for filling in cell at (x,y) with color
   var colorCell = function(x, y, color) {
-    // TODO: calculate how to fill in a cell based on the Grid width and height
-    ctx.fillRect(x,y,1,1);
+    // calculate dimensions of a cell based on the Grid resolution and canvas resolution
+    var cell_size = canvas.resolution / resolution;
+
+    canvas.ctx.fillRect(x*cell_size, y*cell_size, cell_size, cell_size);
   }
 
   // return public api
@@ -23,6 +29,6 @@ function Grid(width, height, ctx) {
 }
 
 
-// construct 3x3 grid object
-var grid = Grid(3, 3, ctx);
-grid.colorCell(2,2);
+// construct an nxn grid object
+var grid = Grid(5, {ctx: ctx, resolution: width});
+grid.colorCell(0,2);
