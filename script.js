@@ -152,6 +152,7 @@ var start = null;
 function iterate(timestamp) {
   if (!start) start = timestamp;
   var progress = timestamp - start;
+  // random_on switches between true / false every 10 seconds.
   var random_on = Math.floor(progress / 10000) % 2 === 0 ? true : false;
 
 
