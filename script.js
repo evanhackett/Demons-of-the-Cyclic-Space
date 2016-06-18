@@ -8,18 +8,11 @@ var height = canvas.height;
 // grid constructor
 function Grid(resolution, canvas) {
 
-  // create grid structure (2d array).
+  // create grid structure (2d array). fill grid with arrays of length resolution which are filled with 0
   var grid = _.map(_.range(resolution), function() {
     return _.fill(_.range(resolution), 0);
   });
 
-
-
-  // _.fill(grid, function(){return _.fill(_.range(resolution), 0)}()); // fill grid with arrays of length resolution which are filled with 0
-
-
-
-  console.log(grid);
 
   // color cell function is a public method for filling in cell at (x,y) with color
   var colorCell = function(x, y, color) {
@@ -98,9 +91,11 @@ function Grid(resolution, canvas) {
 
   var initialize = function() {
     //set some default values
-    grid[1][1] = 1;
-    grid[2][2] = 2;
-    grid[3][3] = 3;
+    for (var i = 0; i < grid.length; i++) {
+      for (var j = 0; j < grid[i].length; j++) {
+        grid[i][j] = _.random(0, 11);
+      }
+    }
   };
 
   var each = function(cb) {
@@ -118,7 +113,6 @@ function Grid(resolution, canvas) {
 
 
 function draw(grid) {
-  console.log('calling draw');
   // clear canvas
   ctx.clearRect(0,0, canvas.width, canvas.height);
 
@@ -129,40 +123,60 @@ function draw(grid) {
   });
 
   function getCellColor(value) {
-    // currently hardcoding in 4 possible values. 0-n where n=4
+    // currently hardcoding in 8 possible values. 0-n where n=8
     var map = {
-      0 : {r: 255, g: 255, b: 255},
-      1 : {r: 255, g: 0, b: 0},
+      0 : {r: 0, g: 0, b: 0},
+      1 : {r: 0, g: 0, b: 255},
       2 : {r: 0, g: 255, b: 0},
-      3 : {r: 0, g: 0, b: 255},
-      4 : {r: 255, g: 255, b: 0},
+      3 : {r: 0, g: 255, b: 255},
+      4 : {r: 255, g: 0, b: 0},
+      5 : {r: 255, g: 0, b: 255},
+      6 : {r: 255, g: 255, b: 0},
+      7 : {r: 255, g: 255, b: 255},
+      8 : {r: 127, g: 127, b: 255},
+      9 : {r: 255, g: 255, b: 127},
+      10 : {r: 0, g: 127, b: 255},
+      11 : {r: 255, g: 127, b: 0},
     };
     return map[value];
   }
 }
 
 // construct an nxn grid object
-var grid = Grid(10, {ctx: ctx, resolution: width});
+var grid = Grid(200, {ctx: ctx, resolution: width});
 grid.initialize();
 // draw(grid);
 
-function iterate() {
+var start = null;
+
+function iterate(timestamp) {
+  if (!start) start = timestamp;
+  var progress = timestamp - start;
+  var random_on = Math.floor(progress / 10000) % 2 === 0 ? true : false;
+
+
   draw(grid);
   grid.nextState(function(cell) {
     // loop through neighbors and check for successor
     var predicate = function(neighbor) {
-      if (cell.value === 4) {
+      if (cell.value === 11) {
         return neighbor.value === 0;
       }
       return neighbor.value === cell.value + 1;
     };
+    // randomly decide if change should even take place, only if random_on is true
+    if (random_on && _.random(1) === 1) {
+      return cell.value;
+    }
     if (_.filter(cell.neighbors, predicate).length > 0) {
-      console.log('consumed');
       // if there is a successor, the cell is "consumed", it's value is incremented
-      return cell.value === 4 ? 0 : cell.value + 1; // have to wrap when successor equals n
+      return cell.value === 11 ? 0 : cell.value + 1; // have to wrap when successor equals n
     }
     return cell.value;
   });
+
+  requestAnimationFrame(iterate);
+
 }
 
-window.setInterval(iterate, 1000);
+iterate();
